@@ -42,6 +42,7 @@ function App() {
   const [currentInput, setCurrentInput] = useState<CalculationInput | null>(null)
   const [sessionRaces, setSessionRaces] = useState<SessionRace[]>([])
   const [historyRecords, setHistoryRecords] = useState<HistoryRecord[]>([])
+  const [selectedHistoryRecordId, setSelectedHistoryRecordId] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
   const sessionTotals = aggregateSessionTotals(sessionRaces)
 
@@ -137,11 +138,15 @@ function App() {
   }
 
   const handleDeleteHistoryRecord = (recordId: string) => {
+    if (selectedHistoryRecordId === recordId) {
+      setSelectedHistoryRecordId(null)
+    }
     setHistoryRecords((existing) => existing.filter((record) => record.id !== recordId))
   }
 
   const handleClearHistory = () => {
     setHistoryRecords([])
+    setSelectedHistoryRecordId(null)
   }
 
   return (
@@ -443,27 +448,71 @@ function App() {
             <ul className="history-list">
               {historyRecords.map((record) => (
                 <li key={record.id} className="history-list__item">
-                  <div>
-                    <p className="history-list__type">
-                      {record.kind === 'single' ? 'Carrera individual' : 'Sesion guardada'}
-                    </p>
-                    <strong>
-                      {record.kind === 'single'
-                        ? record.input.horseName
-                        : `${record.totals.raceCount} carreras guardadas`}
-                    </strong>
-                    <p className="history-list__meta">{formatDateTime(record.createdAt)}</p>
-                    {record.kind === 'single' ? (
-                      <p className="history-list__details">
-                        {formatPositionLabel(record.input.finishPosition)} |{' '}
-                        {formatHorseCountLabel(record.input.horseCount)} |{' '}
-                        {formatCurrency(record.result.positionPayout)}
-                      </p>
-                    ) : (
-                      <p className="history-list__details">
-                        Total distribuido {formatCurrency(record.totals.totalPositionPayout)}
-                      </p>
-                    )}
+                  <div className="history-list__content">
+                    <button
+                      type="button"
+                      className={`history-list__summary${
+                        record.kind === 'single' ? ' history-list__summary--clickable' : ''
+                      }`}
+                      onClick={() => {
+                        if (record.kind !== 'single') {
+                          return
+                        }
+
+                        setSelectedHistoryRecordId((current) =>
+                          current === record.id ? null : record.id,
+                        )
+                      }}
+                    >
+                      <div>
+                        <p className="history-list__type">
+                          {record.kind === 'single' ? 'Carrera individual' : 'Sesion guardada'}
+                        </p>
+                        <strong>
+                          {record.kind === 'single'
+                            ? record.input.horseName
+                            : `${record.totals.raceCount} carreras guardadas`}
+                        </strong>
+                        <p className="history-list__meta">{formatDateTime(record.createdAt)}</p>
+                        {record.kind === 'single' ? (
+                          <p className="history-list__details">
+                            {formatPositionLabel(record.input.finishPosition)} |{' '}
+                            {formatHorseCountLabel(record.input.horseCount)} |{' '}
+                            {formatCurrency(record.result.positionPayout)}
+                          </p>
+                        ) : (
+                          <p className="history-list__details">
+                            Total distribuido {formatCurrency(record.totals.totalPositionPayout)}
+                          </p>
+                        )}
+                      </div>
+                      {record.kind === 'single' ? (
+                        <span className="history-list__toggle">
+                          {selectedHistoryRecordId === record.id ? 'Ocultar pagos' : 'Ver pagos'}
+                        </span>
+                      ) : null}
+                    </button>
+
+                    {record.kind === 'single' && selectedHistoryRecordId === record.id ? (
+                      <dl className="history-list__distribution">
+                        <div>
+                          <dt>Entrenador</dt>
+                          <dd>{formatCurrency(record.result.trainerAmount)}</dd>
+                        </div>
+                        <div>
+                          <dt>Groom</dt>
+                          <dd>{formatCurrency(record.result.groomAmount)}</dd>
+                        </div>
+                        <div>
+                          <dt>Jockey</dt>
+                          <dd>{formatCurrency(record.result.jockeyAmount)}</dd>
+                        </div>
+                        <div>
+                          <dt>Ganancia</dt>
+                          <dd>{formatCurrency(record.result.profitAmount)}</dd>
+                        </div>
+                      </dl>
+                    ) : null}
                   </div>
                   <button
                     type="button"
