@@ -46,6 +46,11 @@ function App() {
   const [selectedHistoryRecordId, setSelectedHistoryRecordId] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
   const sessionTotals = aggregateSessionTotals(sessionRaces)
+  const selectedHistoryRecord =
+    historyRecords.find(
+      (record): record is CalculationRecord =>
+        record.kind === 'single' && record.id === selectedHistoryRecordId,
+    ) ?? null
 
   useEffect(() => {
     setHistoryRecords(loadHistoryRecords())
@@ -148,6 +153,14 @@ function App() {
   const handleClearHistory = () => {
     setHistoryRecords([])
     setSelectedHistoryRecordId(null)
+  }
+
+  const handleSelectHistoryRecord = (record: HistoryRecord) => {
+    if (record.kind !== 'single') {
+      return
+    }
+
+    setSelectedHistoryRecordId(record.id)
   }
 
   return (
@@ -442,6 +455,48 @@ function App() {
             </button>
           </div>
 
+          {selectedHistoryRecord ? (
+            <div className="history-preview">
+              <div className="history-preview__header">
+                <div>
+                  <p className="history-list__type">Carrera seleccionada</p>
+                  <strong>{selectedHistoryRecord.input.horseName}</strong>
+                  <p className="history-list__meta">{formatDateTime(selectedHistoryRecord.createdAt)}</p>
+                </div>
+                <button
+                  type="button"
+                  className="text-button"
+                  onClick={() => setSelectedHistoryRecordId(null)}
+                >
+                  Cerrar
+                </button>
+              </div>
+              <p className="history-list__details">
+                {formatPositionLabel(selectedHistoryRecord.input.finishPosition)} |{' '}
+                {formatHorseCountLabel(selectedHistoryRecord.input.horseCount)} |{' '}
+                {formatCurrency(selectedHistoryRecord.result.positionPayout)}
+              </p>
+              <dl className="history-list__distribution">
+                <div>
+                  <dt>Entrenador</dt>
+                  <dd>{formatCurrency(selectedHistoryRecord.result.trainerAmount)}</dd>
+                </div>
+                <div>
+                  <dt>Groom</dt>
+                  <dd>{formatCurrency(selectedHistoryRecord.result.groomAmount)}</dd>
+                </div>
+                <div>
+                  <dt>Jockey</dt>
+                  <dd>{formatCurrency(selectedHistoryRecord.result.jockeyAmount)}</dd>
+                </div>
+                <div>
+                  <dt>Ganancia</dt>
+                  <dd>{formatCurrency(selectedHistoryRecord.result.profitAmount)}</dd>
+                </div>
+              </dl>
+            </div>
+          ) : null}
+
           {historyRecords.length > 0 ? (
             <ul className="history-list">
               {historyRecords.map((record) => (
@@ -452,15 +507,7 @@ function App() {
                       className={`history-list__summary${
                         record.kind === 'single' ? ' history-list__summary--clickable' : ''
                       }`}
-                      onClick={() => {
-                        if (record.kind !== 'single') {
-                          return
-                        }
-
-                        setSelectedHistoryRecordId((current) =>
-                          current === record.id ? null : record.id,
-                        )
-                      }}
+                      onClick={() => handleSelectHistoryRecord(record)}
                     >
                       <div>
                         <p className="history-list__type">
@@ -486,31 +533,10 @@ function App() {
                       </div>
                       {record.kind === 'single' ? (
                         <span className="history-list__toggle">
-                          {selectedHistoryRecordId === record.id ? 'Ocultar pagos' : 'Ver pagos'}
+                          {selectedHistoryRecordId === record.id ? 'Seleccionada' : 'Ver pagos'}
                         </span>
                       ) : null}
                     </button>
-
-                    {record.kind === 'single' && selectedHistoryRecordId === record.id ? (
-                      <dl className="history-list__distribution">
-                        <div>
-                          <dt>Entrenador</dt>
-                          <dd>{formatCurrency(record.result.trainerAmount)}</dd>
-                        </div>
-                        <div>
-                          <dt>Groom</dt>
-                          <dd>{formatCurrency(record.result.groomAmount)}</dd>
-                        </div>
-                        <div>
-                          <dt>Jockey</dt>
-                          <dd>{formatCurrency(record.result.jockeyAmount)}</dd>
-                        </div>
-                        <div>
-                          <dt>Ganancia</dt>
-                          <dd>{formatCurrency(record.result.profitAmount)}</dd>
-                        </div>
-                      </dl>
-                    ) : null}
                   </div>
                   <button
                     type="button"

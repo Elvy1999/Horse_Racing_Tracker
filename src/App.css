@@ -321,6 +321,22 @@
   cursor: pointer;
 }
 
+.history-preview {
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #fff8ef, #ffeccd);
+  border: 1px solid rgba(185, 120, 50, 0.16);
+}
+
+.history-preview__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
 .session-list__item p,
 .history-list__item p,
 .history-list__item strong {
