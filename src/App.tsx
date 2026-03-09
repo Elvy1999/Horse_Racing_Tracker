@@ -154,7 +154,7 @@ function App() {
           </div>
           <div>
             <p className="eyebrow">DECOO STABLE</p>
-            <h1>Calculadora de reclamo</h1>
+            <h1>Tabla De Pago</h1>
             <p className="hero__copy">
               Calcula el pago por carrera, acumula varias carreras en una sesion y mira cuanto se
               distribuye a entrenador, groom, jockey y ganancia.
@@ -388,7 +388,7 @@ function App() {
                     <div>
                       <strong>{race.input.horseName}</strong>
                       <p>
-                        Categoria {race.input.category} · {formatHorseCountLabel(race.input.horseCount)} ·{' '}
+                        Categoria {race.input.category} | {formatHorseCountLabel(race.input.horseCount)} |{' '}
                         {formatPositionLabel(race.input.finishPosition)}
                       </p>
                     </div>
@@ -455,8 +455,8 @@ function App() {
                     <p className="history-list__meta">{formatDateTime(record.createdAt)}</p>
                     {record.kind === 'single' ? (
                       <p className="history-list__details">
-                        {formatPositionLabel(record.input.finishPosition)} ·{' '}
-                        {formatHorseCountLabel(record.input.horseCount)} ·{' '}
+                        {formatPositionLabel(record.input.finishPosition)} |{' '}
+                        {formatHorseCountLabel(record.input.horseCount)} |{' '}
                         {formatCurrency(record.result.positionPayout)}
                       </p>
                     ) : (
@@ -487,3 +487,4 @@ function App() {
 }
 
 export default App
+
