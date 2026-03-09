@@ -1,0 +1,120 @@
+import type {
+  AgeGroup,
+  CalculationInput,
+  CalculationResult,
+  Category,
+  SessionRace,
+  SessionTotals,
+} from './types'
+
+type PayoutMap = Record<Category, number>
+
+const PURSE_TABLES: Record<AgeGroup, PayoutMap> = {
+  young: {
+    100: 85000,
+    200: 95000,
+    300: 110207,
+    400: 131902,
+    500: 148540,
+    600: 165310,
+  },
+  older: {
+    100: 85000,
+    200: 95000,
+    300: 110207,
+    400: 125247,
+    500: 141086,
+    600: 157058,
+  },
+}
+
+const POSITION_TABLES: Record<3 | 4 | 5, Record<number, number>> = {
+  3: {
+    1: 0.6667,
+    2: 0.2223,
+    3: 0.111,
+  },
+  4: {
+    1: 0.625,
+    2: 0.2083,
+    3: 0.1042,
+    4: 0.0625,
+  },
+  5: {
+    1: 0.6,
+    2: 0.2,
+    3: 0.1,
+    4: 0.06,
+    5: 0.04,
+  },
+}
+
+export const AGE_GROUP_OPTIONS: Array<{ value: AgeGroup; label: string }> = [
+  { value: 'young', label: '3 anos o menos' },
+  { value: 'older', label: '4 anos o mas' },
+]
+
+export const CATEGORY_OPTIONS: Category[] = [100, 200, 300, 400, 500, 600]
+
+function roundCurrency(value: number): number {
+  return Math.round(value * 100) / 100
+}
+
+export function getBasePurse(ageGroup: AgeGroup, category: Category): number {
+  return PURSE_TABLES[ageGroup][category]
+}
+
+export function getPositionPercent(horseCount: number, finishPosition: number): number {
+  if (horseCount < 3) {
+    throw new Error('Horse count must be 3 or greater.')
+  }
+
+  const normalizedHorseCount = horseCount >= 5 ? 5 : (horseCount as 3 | 4)
+  const table = POSITION_TABLES[normalizedHorseCount]
+  return table[finishPosition] ?? 0
+}
+
+export function formatPositionPercent(percent: number): string {
+  return `${(percent * 100).toFixed(2)}%`
+}
+
+export function calculateRacePayout(input: CalculationInput): CalculationResult {
+  const basePurse = getBasePurse(input.ageGroup, input.category)
+  const positionPercent = getPositionPercent(input.horseCount, input.finishPosition)
+  const positionPayout = roundCurrency(basePurse * positionPercent)
+  const trainerAmount = roundCurrency(positionPayout * 0.15)
+  const groomAmount = roundCurrency(positionPayout * 0.1)
+  const jockeyAmount = roundCurrency(positionPayout * 0.1)
+  const profitAmount = roundCurrency(positionPayout * 0.65)
+
+  return {
+    basePurse,
+    positionPercent,
+    positionPayout,
+    trainerAmount,
+    groomAmount,
+    jockeyAmount,
+    profitAmount,
+  }
+}
+
+export function aggregateSessionTotals(races: SessionRace[]): SessionTotals {
+  return races.reduce<SessionTotals>(
+    (totals, race) => ({
+      raceCount: totals.raceCount + 1,
+      totalPositionPayout: roundCurrency(totals.totalPositionPayout + race.result.positionPayout),
+      totalTrainerAmount: roundCurrency(totals.totalTrainerAmount + race.result.trainerAmount),
+      totalGroomAmount: roundCurrency(totals.totalGroomAmount + race.result.groomAmount),
+      totalJockeyAmount: roundCurrency(totals.totalJockeyAmount + race.result.jockeyAmount),
+      totalProfitAmount: roundCurrency(totals.totalProfitAmount + race.result.profitAmount),
+    }),
+    {
+      raceCount: 0,
+      totalPositionPayout: 0,
+      totalTrainerAmount: 0,
+      totalGroomAmount: 0,
+      totalJockeyAmount: 0,
+      totalProfitAmount: 0,
+    },
+  )
+}
