@@ -56,6 +56,10 @@ export const AGE_GROUP_OPTIONS: Array<{ value: AgeGroup; label: string }> = [
 
 export const CATEGORY_OPTIONS: Category[] = [100, 200, 300, 400, 500, 600]
 
+export function formatCategoryLabel(category: Category): string {
+  return category === 600 ? 'No Reclamable' : String(category)
+}
+
 function roundCurrency(value: number): number {
   return Math.round(value * 100) / 100
 }

@@ -7,6 +7,7 @@ import {
   CATEGORY_OPTIONS,
   aggregateSessionTotals,
   calculateRacePayout,
+  formatCategoryLabel,
   formatPositionPercent,
 } from './lib/calculator'
 import { formatCurrency, formatDateTime, formatHorseCountLabel, formatPositionLabel } from './lib/format'
@@ -236,7 +237,7 @@ function App() {
               >
                 {CATEGORY_OPTIONS.map((option) => (
                   <option key={option} value={option}>
-                    {option}
+                    {formatCategoryLabel(option)}
                   </option>
                 ))}
               </select>
@@ -340,7 +341,7 @@ function App() {
 
               <div className="result-meta">
                 <span>{AGE_GROUP_OPTIONS.find((option) => option.value === currentInput.ageGroup)?.label}</span>
-                <span>Categoria {currentInput.category}</span>
+                <span>Categoria {formatCategoryLabel(currentInput.category)}</span>
                 <span>{formatHorseCountLabel(currentInput.horseCount)}</span>
                 <span>{formatPositionLabel(currentInput.finishPosition)}</span>
               </div>
@@ -404,7 +405,8 @@ function App() {
                     <div>
                       <strong>{race.input.horseName}</strong>
                       <p>
-                        Categoria {race.input.category} | {formatHorseCountLabel(race.input.horseCount)} |{' '}
+                        Categoria {formatCategoryLabel(race.input.category)} |{' '}
+                        {formatHorseCountLabel(race.input.horseCount)} |{' '}
                         {formatPositionLabel(race.input.finishPosition)}
                       </p>
                     </div>
