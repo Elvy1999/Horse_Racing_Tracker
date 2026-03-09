@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import './App.css'
+import horseLogo from '../HorseLogo.jpeg'
 import {
   AGE_GROUP_OPTIONS,
   CATEGORY_OPTIONS,
@@ -153,10 +154,7 @@ function App() {
     <div className="app-shell">
       <header className="hero">
         <div className="hero__brand">
-          <div className="brand-mark" aria-hidden="true">
-            <span className="brand-mark__letter">D</span>
-            <span className="brand-mark__swirl">C</span>
-          </div>
+          <img className="brand-mark" src={horseLogo} alt="Caballo corriendo en pista" />
           <div>
             <p className="eyebrow">DECOO STABLE</p>
             <h1>Tabla De Pago</h1>
