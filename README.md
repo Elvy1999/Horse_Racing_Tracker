@@ -1,15 +1,16 @@
 # DECOO Reclamo Payment Calculator
 
-Aplicacion web en React + TypeScript + Vite para calcular pagos de carreras de reclamo.
+Web application built with React, TypeScript, and Vite to calculate horse race claim payments.
 
-## Lo que hace
+## Features
 
-- Calcula el pago por carrera usando las tablas fijas de `3 anos o menos` y `4 anos o mas`
-- Distribuye el premio entre `Entrenador`, `Groom`, `Jockey` y `Ganancia`
-- Permite acumular varias carreras en una sesion
-- Guarda historial local del navegador para carreras individuales y sesiones guardadas
+- Calculates the payout for a race using the fixed `3 years or less` and `4 years or more` purse tables
+- Splits the position payout between `Trainer`, `Groom`, `Jockey`, and `Profit`
+- Lets users accumulate multiple races into a single session total
+- Stores local browser history for both individual races and saved sessions
+- Allows users to open a saved race from history and view the payment breakdown
 
-## Comandos
+## Commands
 
 ```bash
 npm install
@@ -19,17 +20,17 @@ npm run lint
 npm run build
 ```
 
-## Reglas implementadas
+## Implemented Rules
 
-- Categorias: `100`, `200`, `300`, `400`, `500`, `600`
-- Menos de `3` caballos: no permitido
-- Posiciones fuera de la tabla de pago: regresan `0`
-- Distribucion del premio:
-  - Entrenador: `15%`
+- Categories: `100`, `200`, `300`, `400`, `500`, `600`
+- Fewer than `3` horses: not allowed
+- Finish positions outside the payout table return `0`
+- Payout split:
+  - Trainer: `15%`
   - Groom: `10%`
   - Jockey: `10%`
-  - Ganancia: `65%`
+  - Profit: `65%`
 
-## Historial
+## History
 
-La aplicacion guarda el historial en `localStorage`, asi que los datos viven en el navegador actual.
+The application stores history in `localStorage`, so the saved data lives in the current browser.
