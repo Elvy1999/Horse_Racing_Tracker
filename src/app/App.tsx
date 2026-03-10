@@ -311,24 +311,6 @@ function App() {
           </div>
 
           <form className="calc-form" onSubmit={handleCalculate}>
-            <label>
-              Nombre del caballo
-              <select
-                value={form.horseName}
-                onChange={(event) => setForm((current) => ({ ...current, horseName: event.target.value }))}
-                disabled={horseNames.length === 0}
-              >
-                <option value="">
-                  {horseNames.length === 0 ? 'Primero agrega un caballo' : 'Selecciona un caballo'}
-                </option>
-                {horseNames.map((horseName) => (
-                  <option key={horseName} value={horseName}>
-                    {horseName}
-                  </option>
-                ))}
-              </select>
-            </label>
-
             <div className="horse-library">
               <div className="horse-library__header">
                 <div>
@@ -392,6 +374,24 @@ function App() {
                 </div>
               )}
             </div>
+
+            <label>
+              Selecciona caballo
+              <select
+                value={form.horseName}
+                onChange={(event) => setForm((current) => ({ ...current, horseName: event.target.value }))}
+                disabled={horseNames.length === 0}
+              >
+                <option value="">
+                  {horseNames.length === 0 ? 'Primero agrega un caballo' : 'Selecciona un caballo'}
+                </option>
+                {horseNames.map((horseName) => (
+                  <option key={horseName} value={horseName}>
+                    {horseName}
+                  </option>
+                ))}
+              </select>
+            </label>
 
             <label>
               Edad del caballo
