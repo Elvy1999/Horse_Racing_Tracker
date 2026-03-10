@@ -155,26 +155,15 @@
   gap: 12px;
 }
 
-.horse-library__list {
+.horse-library__controls {
   display: grid;
-  gap: 10px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.horse-library__item {
-  display: flex;
-  justify-content: space-between;
   gap: 12px;
-  align-items: center;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.72);
 }
 
-.horse-library__item span {
-  color: #5e3929;
+.horse-library__controls label {
+  display: grid;
+  gap: 8px;
+  color: #4e2e22;
   font-weight: 600;
 }
 
@@ -534,6 +523,11 @@
   }
 
   .horse-library__create {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+
+  .horse-library__controls {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
   }

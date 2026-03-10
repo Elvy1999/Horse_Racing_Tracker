@@ -59,6 +59,7 @@ const DEFAULT_FORM: FormState = {
 function App() {
   const [form, setForm] = useState<FormState>(DEFAULT_FORM)
   const [horseNames, setHorseNames] = useState<string[]>([])
+  const [managedHorseName, setManagedHorseName] = useState('')
   const [newHorseName, setNewHorseName] = useState('')
   const [currentResult, setCurrentResult] = useState<CalculationResult | null>(null)
   const [currentInput, setCurrentInput] = useState<CalculationInput | null>(null)
@@ -108,13 +109,21 @@ function App() {
         setForm((current) => ({ ...current, horseName: '' }))
       }
 
+      if (managedHorseName) {
+        setManagedHorseName('')
+      }
+
       return
     }
 
     if (!horseNames.includes(form.horseName)) {
       setForm((current) => ({ ...current, horseName: horseNames[0] }))
     }
-  }, [form.horseName, horseNames])
+
+    if (!horseNames.includes(managedHorseName)) {
+      setManagedHorseName(horseNames[0])
+    }
+  }, [form.horseName, horseNames, managedHorseName])
 
   const handleAddHorseName = () => {
     const normalizedHorseName = normalizeHorseName(newHorseName)
@@ -135,15 +144,22 @@ function App() {
 
     setHorseNames((current) => buildHorseNameList([...current, normalizedHorseName]))
     setForm((current) => ({ ...current, horseName: normalizedHorseName }))
+    setManagedHorseName(normalizedHorseName)
     setNewHorseName('')
     setHorseErrorMessage('')
     setErrorMessage('')
   }
 
-  const handleDeleteHorseName = (horseNameToDelete: string) => {
+  const handleDeleteHorseName = () => {
+    if (!managedHorseName) {
+      return
+    }
+
+    const horseNameToDelete = managedHorseName
     const nextHorseNames = horseNames.filter((horseName) => horseName !== horseNameToDelete)
 
     setHorseNames(nextHorseNames)
+    setManagedHorseName(nextHorseNames[0] ?? '')
     setHorseErrorMessage('')
 
     if (form.horseName === horseNameToDelete) {
@@ -317,7 +333,7 @@ function App() {
               <div className="horse-library__header">
                 <div>
                   <p className="panel__eyebrow">Caballos guardados</p>
-                  <h3>Lista de caballos</h3>
+                  <h3>Gestion compacta</h3>
                 </div>
                 <strong>{horseNames.length}</strong>
               </div>
@@ -348,20 +364,28 @@ function App() {
               {horseErrorMessage ? <p className="form-error">{horseErrorMessage}</p> : null}
 
               {horseNames.length > 0 ? (
-                <ul className="horse-library__list">
-                  {horseNames.map((horseName) => (
-                    <li key={horseName} className="horse-library__item">
-                      <span>{horseName}</span>
-                      <button
-                        type="button"
-                        className="text-button"
-                        onClick={() => handleDeleteHorseName(horseName)}
-                      >
-                        Quitar
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                <div className="horse-library__controls">
+                  <label>
+                    Caballos guardados
+                    <select
+                      value={managedHorseName}
+                      onChange={(event) => setManagedHorseName(event.target.value)}
+                    >
+                      {horseNames.map((horseName) => (
+                        <option key={horseName} value={horseName}>
+                          {horseName}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button
+                    type="button"
+                    className="button button--ghost"
+                    onClick={handleDeleteHorseName}
+                  >
+                    Quitar caballo seleccionado
+                  </button>
+                </div>
               ) : (
                 <div className="empty-state empty-state--compact">
                   <p>Guarda tus caballos aqui para seleccionarlos mas rapido en cada carrera.</p>
