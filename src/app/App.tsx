@@ -356,7 +356,7 @@ function App() {
                   }}
                   placeholder="Ej. Relampago Rojo"
                 />
-                <button type="button" className="button button--ghost" onClick={handleAddHorseName}>
+                <button type="button" className="button button--success" onClick={handleAddHorseName}>
                   Agregar caballo
                 </button>
               </div>

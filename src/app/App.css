@@ -226,6 +226,12 @@
   box-shadow: 0 14px 30px rgba(220, 37, 37, 0.28);
 }
 
+.button--success {
+  background: linear-gradient(135deg, #1e8f45, #38b864);
+  color: #f7fff8;
+  box-shadow: 0 14px 30px rgba(30, 143, 69, 0.24);
+}
+
 .button--ghost {
   background: rgba(221, 21, 21, 0.08);
   color: #a51f1f;
