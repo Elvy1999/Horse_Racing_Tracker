@@ -343,6 +343,29 @@
   list-style: none;
 }
 
+.history-list {
+  max-height: 270px;
+  overflow-y: auto;
+  padding-right: 6px;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(185, 120, 50, 0.6) rgba(255, 243, 230, 0.9);
+}
+
+.history-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.history-list::-webkit-scrollbar-track {
+  background: rgba(255, 243, 230, 0.9);
+  border-radius: 999px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: rgba(185, 120, 50, 0.6);
+  border-radius: 999px;
+}
+
 .session-list__item,
 .history-list__item {
   display: flex;
