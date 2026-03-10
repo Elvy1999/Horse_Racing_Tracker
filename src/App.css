@@ -329,6 +329,28 @@
   border: 1px solid rgba(185, 120, 50, 0.16);
 }
 
+.history-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.history-tabs__button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(151, 98, 69, 0.1);
+  color: #7c4d37;
+  font-weight: 700;
+}
+
+.history-tabs__button--active {
+  background: linear-gradient(135deg, #dc2525, #f55d1b);
+  color: #fff8ef;
+  box-shadow: 0 12px 24px rgba(220, 37, 37, 0.2);
+}
+
 .history-preview__header {
   display: flex;
   justify-content: space-between;

@@ -32,6 +32,8 @@ type FormState = {
   finishPosition: string
 }
 
+type HistoryTab = 'single' | 'session'
+
 const DEFAULT_FORM: FormState = {
   horseName: '',
   ageGroup: 'young',
@@ -47,6 +49,7 @@ function App() {
   const [sessionRaces, setSessionRaces] = useState<SessionRace[]>([])
   const [historyRecords, setHistoryRecords] = useState<HistoryRecord[]>([])
   const [selectedHistoryRecordId, setSelectedHistoryRecordId] = useState<string | null>(null)
+  const [historyTab, setHistoryTab] = useState<HistoryTab>('single')
   const [errorMessage, setErrorMessage] = useState('')
   const sessionTotals = aggregateSessionTotals(sessionRaces)
   const finishPositionOptions = getFinishPositionOptions(Number.parseInt(form.horseCount, 10))
@@ -55,6 +58,7 @@ function App() {
       (record): record is CalculationRecord =>
         record.kind === 'single' && record.id === selectedHistoryRecordId,
     ) ?? null
+  const visibleHistoryRecords = historyRecords.filter((record) => record.kind === historyTab)
 
   useEffect(() => {
     setHistoryRecords(loadHistoryRecords())
@@ -475,7 +479,28 @@ function App() {
             </button>
           </div>
 
-          {selectedHistoryRecord ? (
+          <div className="history-tabs" role="tablist" aria-label="Historial">
+            <button
+              type="button"
+              className={`history-tabs__button${
+                historyTab === 'single' ? ' history-tabs__button--active' : ''
+              }`}
+              onClick={() => setHistoryTab('single')}
+            >
+              Carreras individuales
+            </button>
+            <button
+              type="button"
+              className={`history-tabs__button${
+                historyTab === 'session' ? ' history-tabs__button--active' : ''
+              }`}
+              onClick={() => setHistoryTab('session')}
+            >
+              Sesiones acumuladas
+            </button>
+          </div>
+
+          {historyTab === 'single' && selectedHistoryRecord ? (
             <div className="history-preview">
               <div className="history-preview__header">
                 <div>
@@ -517,9 +542,9 @@ function App() {
             </div>
           ) : null}
 
-          {historyRecords.length > 0 ? (
+          {visibleHistoryRecords.length > 0 ? (
             <ul className="history-list">
-              {historyRecords.map((record) => (
+              {visibleHistoryRecords.map((record) => (
                 <li key={record.id} className="history-list__item">
                   <div className="history-list__content">
                     <button
@@ -570,7 +595,11 @@ function App() {
             </ul>
           ) : (
             <div className="empty-state empty-state--compact">
-              <p>Todavia no hay calculos guardados en este navegador.</p>
+              <p>
+                {historyTab === 'single'
+                  ? 'Todavia no hay carreras individuales guardadas en este navegador.'
+                  : 'Todavia no hay sesiones acumuladas guardadas en este navegador.'}
+              </p>
             </div>
           )}
         </section>
