@@ -1,11 +1,12 @@
 export type AgeGroup = 'young' | 'older'
 
-export type Category = 100 | 200 | 300 | 400 | 500 | 600
+export type Category = 100 | 200 | 300 | 400 | 500 | 600 | 'clasico'
 
 export type CalculationInput = {
   horseName: string
   ageGroup: AgeGroup
   category: Category
+  customPurse?: number
   horseCount: number
   finishPosition: number
 }

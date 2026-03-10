@@ -7,7 +7,8 @@ import type {
   SessionTotals,
 } from './types'
 
-type PayoutMap = Record<Category, number>
+type FixedCategory = Exclude<Category, 'clasico'>
+type PayoutMap = Record<FixedCategory, number>
 
 const PURSE_TABLES: Record<AgeGroup, PayoutMap> = {
   young: {
@@ -54,7 +55,15 @@ export const AGE_GROUP_OPTIONS: Array<{ value: AgeGroup; label: string }> = [
   { value: 'older', label: '4 anos o mas' },
 ]
 
-export const CATEGORY_OPTIONS: Category[] = [100, 200, 300, 400, 500, 600]
+export const CATEGORY_OPTIONS: Array<{ value: Category; label: string }> = [
+  { value: 100, label: '100' },
+  { value: 200, label: '200' },
+  { value: 300, label: '300' },
+  { value: 400, label: '400' },
+  { value: 500, label: '500' },
+  { value: 600, label: 'No Reclamable' },
+  { value: 'clasico', label: 'Clasico' },
+]
 export const HORSE_COUNT_OPTIONS = [
   { value: 3, label: '3' },
   { value: 4, label: '4' },
@@ -67,6 +76,10 @@ export function getFinishPositionOptions(horseCount: number): number[] {
 }
 
 export function formatCategoryLabel(category: Category): string {
+  if (category === 'clasico') {
+    return 'Clasico'
+  }
+
   return category === 600 ? 'No Reclamable' : String(category)
 }
 
@@ -74,8 +87,16 @@ function roundCurrency(value: number): number {
   return Math.round(value * 100) / 100
 }
 
-export function getBasePurse(ageGroup: AgeGroup, category: Category): number {
-  return PURSE_TABLES[ageGroup][category]
+export function getBasePurse(input: Pick<CalculationInput, 'ageGroup' | 'category' | 'customPurse'>): number {
+  if (input.category === 'clasico') {
+    if (typeof input.customPurse !== 'number' || input.customPurse <= 0) {
+      throw new Error('Clasico races require a custom purse amount.')
+    }
+
+    return roundCurrency(input.customPurse)
+  }
+
+  return PURSE_TABLES[input.ageGroup][input.category]
 }
 
 export function getPositionPercent(horseCount: number, finishPosition: number): number {
@@ -93,7 +114,7 @@ export function formatPositionPercent(percent: number): string {
 }
 
 export function calculateRacePayout(input: CalculationInput): CalculationResult {
-  const basePurse = getBasePurse(input.ageGroup, input.category)
+  const basePurse = getBasePurse(input)
   const positionPercent = getPositionPercent(input.horseCount, input.finishPosition)
   const positionPayout = roundCurrency(basePurse * positionPercent)
   const trainerAmount = roundCurrency(positionPayout * 0.15)

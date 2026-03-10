@@ -4,11 +4,15 @@ import type { SessionRace } from './types'
 
 describe('purse lookups', () => {
   it('returns the expected purse for young horses', () => {
-    expect(getBasePurse('young', 400)).toBe(131902)
+    expect(getBasePurse({ ageGroup: 'young', category: 400 })).toBe(131902)
   })
 
   it('returns the expected purse for older horses', () => {
-    expect(getBasePurse('older', 600)).toBe(157058)
+    expect(getBasePurse({ ageGroup: 'older', category: 600 })).toBe(157058)
+  })
+
+  it('returns the custom purse for clasico races', () => {
+    expect(getBasePurse({ ageGroup: 'young', category: 'clasico', customPurse: 250000 })).toBe(250000)
   })
 })
 
@@ -108,6 +112,27 @@ describe('race calculations', () => {
       groomAmount: 0,
       jockeyAmount: 0,
       profitAmount: 0,
+    })
+  })
+
+  it('calculates payouts for clasico using the custom purse', () => {
+    expect(
+      calculateRacePayout({
+        horseName: 'Clasico Azul',
+        ageGroup: 'older',
+        category: 'clasico',
+        customPurse: 300000,
+        horseCount: 5,
+        finishPosition: 2,
+      }),
+    ).toEqual({
+      basePurse: 300000,
+      positionPercent: 0.2,
+      positionPayout: 60000,
+      trainerAmount: 9000,
+      groomAmount: 6000,
+      jockeyAmount: 6000,
+      profitAmount: 39000,
     })
   })
 })

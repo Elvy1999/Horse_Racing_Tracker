@@ -28,6 +28,7 @@ type FormState = {
   horseName: string
   ageGroup: AgeGroup
   category: CalculationInput['category']
+  customPurse: string
   horseCount: string
   finishPosition: string
 }
@@ -38,6 +39,7 @@ const DEFAULT_FORM: FormState = {
   horseName: '',
   ageGroup: 'young',
   category: 100,
+  customPurse: '',
   horseCount: '5',
   finishPosition: '1',
 }
@@ -78,6 +80,7 @@ function App() {
 
     const horseCount = Number.parseInt(form.horseCount, 10)
     const finishPosition = Number.parseInt(form.finishPosition, 10)
+    const customPurse = Number.parseFloat(form.customPurse)
 
     if (!form.horseName.trim()) {
       setErrorMessage('Escribe el nombre del caballo.')
@@ -94,10 +97,16 @@ function App() {
       return
     }
 
+    if (form.category === 'clasico' && (!Number.isFinite(customPurse) || customPurse <= 0)) {
+      setErrorMessage('Para Clasico debes escribir una bolsa valida.')
+      return
+    }
+
     const input: CalculationInput = {
       horseName: form.horseName.trim(),
       ageGroup: form.ageGroup,
       category: form.category,
+      customPurse: form.category === 'clasico' ? customPurse : undefined,
       horseCount,
       finishPosition,
     }
@@ -239,17 +248,36 @@ function App() {
                 onChange={(event) =>
                   setForm((current) => ({
                     ...current,
-                    category: Number.parseInt(event.target.value, 10) as CalculationInput['category'],
+                    category:
+                      event.target.value === 'clasico'
+                        ? 'clasico'
+                        : (Number.parseInt(event.target.value, 10) as CalculationInput['category']),
                   }))
                 }
               >
                 {CATEGORY_OPTIONS.map((option) => (
-                  <option key={option} value={option}>
-                    {formatCategoryLabel(option)}
+                  <option key={String(option.value)} value={option.value}>
+                    {option.label}
                   </option>
                 ))}
               </select>
             </label>
+
+            {form.category === 'clasico' ? (
+              <label>
+                Bolsa del clasico
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={form.customPurse}
+                  onChange={(event) =>
+                    setForm((current) => ({ ...current, customPurse: event.target.value }))
+                  }
+                  placeholder="Ej. 250000"
+                />
+              </label>
+            ) : null}
 
             <div className="calc-form__row">
               <label>
