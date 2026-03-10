@@ -5,6 +5,7 @@ import horseLogo from '../HorseLogo.jpeg'
 import {
   AGE_GROUP_OPTIONS,
   CATEGORY_OPTIONS,
+  HORSE_COUNT_OPTIONS,
   aggregateSessionTotals,
   calculateRacePayout,
   formatCategoryLabel,
@@ -246,15 +247,18 @@ function App() {
             <div className="calc-form__row">
               <label>
                 Cantidad de caballos
-                <input
-                  type="number"
-                  min="3"
-                  step="1"
+                <select
                   value={form.horseCount}
                   onChange={(event) =>
                     setForm((current) => ({ ...current, horseCount: event.target.value }))
                   }
-                />
+                >
+                  {HORSE_COUNT_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </label>
 
               <label>

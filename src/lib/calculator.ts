@@ -55,6 +55,11 @@ export const AGE_GROUP_OPTIONS: Array<{ value: AgeGroup; label: string }> = [
 ]
 
 export const CATEGORY_OPTIONS: Category[] = [100, 200, 300, 400, 500, 600]
+export const HORSE_COUNT_OPTIONS = [
+  { value: 3, label: '3' },
+  { value: 4, label: '4' },
+  { value: 5, label: '5 o mas' },
+] as const
 
 export function formatCategoryLabel(category: Category): string {
   return category === 600 ? 'No Reclamable' : String(category)

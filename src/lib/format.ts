@@ -15,7 +15,7 @@ export function formatDateTime(value: string): string {
 }
 
 export function formatHorseCountLabel(horseCount: number): string {
-  return `${horseCount} caballos`
+  return horseCount >= 5 ? '5 o mas caballos' : `${horseCount} caballos`
 }
 
 export function formatPositionLabel(position: number): string {
