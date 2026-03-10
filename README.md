@@ -17,6 +17,8 @@ The application is designed to support a specific horse racing payment workflow 
 
 The app also supports multi-race accumulation so a user can build a session and see total distributions across several races.
 
+To simplify repeat use, horse names can now be saved locally and reused from a selector in future calculations.
+
 ## Key Features
 
 - Mobile-first responsive interface
@@ -33,6 +35,8 @@ The app also supports multi-race accumulation so a user can build a session and 
   - `Groom`
   - `Jockey`
   - `Profit`
+- Saved horse list stored in browser local storage
+- Horse selector that uses only saved names for new calculations
 - Session accumulator for multiple races
 - Local history for:
   - Individual race calculations
@@ -51,6 +55,7 @@ The calculator supports the following categories:
 - `400`
 - `500`
 - `600`
+- `Clasico` with a custom purse amount entered by the user
 
 ### Age Groups
 
@@ -138,8 +143,9 @@ If GitHub Pages has not refreshed yet, allow a short delay after pushing changes
 This project does not use a backend database in its current version.
 
 - Calculation history is stored in `localStorage`
+- Saved horse names are stored in `localStorage`
 - Saved data remains in the current browser only
-- Clearing browser storage will remove the saved history
+- Clearing browser storage will remove the saved history and saved horse names
 
 ## Current Scope
 

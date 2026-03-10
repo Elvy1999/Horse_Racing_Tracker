@@ -18,7 +18,14 @@ import {
   formatHorseCountLabel,
   formatPositionLabel,
 } from '../shared/format'
-import { loadHistoryRecords, saveHistoryRecords } from '../shared/storage'
+import {
+  buildHorseNameList,
+  loadHistoryRecords,
+  loadHorseNames,
+  normalizeHorseName,
+  saveHistoryRecords,
+  saveHorseNames,
+} from '../shared/storage'
 import type {
   AgeGroup,
   CalculationInput,
@@ -51,6 +58,8 @@ const DEFAULT_FORM: FormState = {
 
 function App() {
   const [form, setForm] = useState<FormState>(DEFAULT_FORM)
+  const [horseNames, setHorseNames] = useState<string[]>([])
+  const [newHorseName, setNewHorseName] = useState('')
   const [currentResult, setCurrentResult] = useState<CalculationResult | null>(null)
   const [currentInput, setCurrentInput] = useState<CalculationInput | null>(null)
   const [sessionRaces, setSessionRaces] = useState<SessionRace[]>([])
@@ -58,6 +67,7 @@ function App() {
   const [selectedHistoryRecordId, setSelectedHistoryRecordId] = useState<string | null>(null)
   const [historyTab, setHistoryTab] = useState<HistoryTab>('single')
   const [errorMessage, setErrorMessage] = useState('')
+  const [horseErrorMessage, setHorseErrorMessage] = useState('')
   const sessionTotals = aggregateSessionTotals(sessionRaces)
   const finishPositionOptions = getFinishPositionOptions(Number.parseInt(form.horseCount, 10))
   const selectedHistoryRecord =
@@ -74,11 +84,68 @@ function App() {
 
   useEffect(() => {
     setHistoryRecords(loadHistoryRecords())
+    setHorseNames(loadHorseNames())
   }, [])
 
   useEffect(() => {
     saveHistoryRecords(historyRecords)
   }, [historyRecords])
+
+  useEffect(() => {
+    saveHorseNames(horseNames)
+  }, [horseNames])
+
+  useEffect(() => {
+    if (horseNames.length === 0) {
+      if (form.horseName) {
+        setForm((current) => ({ ...current, horseName: '' }))
+      }
+
+      return
+    }
+
+    if (!horseNames.includes(form.horseName)) {
+      setForm((current) => ({ ...current, horseName: horseNames[0] }))
+    }
+  }, [form.horseName, horseNames])
+
+  const handleAddHorseName = () => {
+    const normalizedHorseName = normalizeHorseName(newHorseName)
+
+    if (!normalizedHorseName) {
+      setHorseErrorMessage('Escribe un nombre valido para guardar el caballo.')
+      return
+    }
+
+    const alreadyExists = horseNames.some(
+      (horseName) => horseName.toLocaleLowerCase('es-DO') === normalizedHorseName.toLocaleLowerCase('es-DO'),
+    )
+
+    if (alreadyExists) {
+      setHorseErrorMessage('Ese caballo ya esta guardado.')
+      return
+    }
+
+    setHorseNames((current) => buildHorseNameList([...current, normalizedHorseName]))
+    setForm((current) => ({ ...current, horseName: normalizedHorseName }))
+    setNewHorseName('')
+    setHorseErrorMessage('')
+    setErrorMessage('')
+  }
+
+  const handleDeleteHorseName = (horseNameToDelete: string) => {
+    const nextHorseNames = horseNames.filter((horseName) => horseName !== horseNameToDelete)
+
+    setHorseNames(nextHorseNames)
+    setHorseErrorMessage('')
+
+    if (form.horseName === horseNameToDelete) {
+      setForm((current) => ({
+        ...current,
+        horseName: nextHorseNames[0] ?? '',
+      }))
+    }
+  }
 
   const handleCalculate = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -88,7 +155,7 @@ function App() {
     const customPurse = Number.parseFloat(form.customPurse)
 
     if (!form.horseName.trim()) {
-      setErrorMessage('Escribe el nombre del caballo.')
+      setErrorMessage('Selecciona un caballo guardado.')
       return
     }
 
@@ -222,13 +289,77 @@ function App() {
           <form className="calc-form" onSubmit={handleCalculate}>
             <label>
               Nombre del caballo
-              <input
-                type="text"
+              <select
                 value={form.horseName}
                 onChange={(event) => setForm((current) => ({ ...current, horseName: event.target.value }))}
-                placeholder="Ej. Relampago Rojo"
-              />
+                disabled={horseNames.length === 0}
+              >
+                <option value="">
+                  {horseNames.length === 0 ? 'Primero agrega un caballo' : 'Selecciona un caballo'}
+                </option>
+                {horseNames.map((horseName) => (
+                  <option key={horseName} value={horseName}>
+                    {horseName}
+                  </option>
+                ))}
+              </select>
             </label>
+
+            <div className="horse-library">
+              <div className="horse-library__header">
+                <div>
+                  <p className="panel__eyebrow">Caballos guardados</p>
+                  <h3>Lista de caballos</h3>
+                </div>
+                <strong>{horseNames.length}</strong>
+              </div>
+
+              <div className="horse-library__create">
+                <input
+                  type="text"
+                  value={newHorseName}
+                  onChange={(event) => {
+                    setNewHorseName(event.target.value)
+                    if (horseErrorMessage) {
+                      setHorseErrorMessage('')
+                    }
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault()
+                      handleAddHorseName()
+                    }
+                  }}
+                  placeholder="Ej. Relampago Rojo"
+                />
+                <button type="button" className="button button--ghost" onClick={handleAddHorseName}>
+                  Agregar caballo
+                </button>
+              </div>
+
+              {horseErrorMessage ? <p className="form-error">{horseErrorMessage}</p> : null}
+
+              {horseNames.length > 0 ? (
+                <ul className="horse-library__list">
+                  {horseNames.map((horseName) => (
+                    <li key={horseName} className="horse-library__item">
+                      <span>{horseName}</span>
+                      <button
+                        type="button"
+                        className="text-button"
+                        onClick={() => handleDeleteHorseName(horseName)}
+                      >
+                        Quitar
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="empty-state empty-state--compact">
+                  <p>Guarda tus caballos aqui para seleccionarlos mas rapido en cada carrera.</p>
+                </div>
+              )}
+            </div>
 
             <label>
               Edad del caballo
@@ -330,14 +461,21 @@ function App() {
             {errorMessage ? <p className="form-error">{errorMessage}</p> : null}
 
             <div className="form-actions">
-              <button type="submit" className="button button--primary">
+              <button
+                type="submit"
+                className="button button--primary"
+                disabled={horseNames.length === 0}
+              >
                 Calcular pago
               </button>
               <button
                 type="button"
                 className="button button--ghost"
                 onClick={() => {
-                  setForm(DEFAULT_FORM)
+                  setForm((current) => ({
+                    ...DEFAULT_FORM,
+                    horseName: horseNames.includes(current.horseName) ? current.horseName : (horseNames[0] ?? ''),
+                  }))
                   setCurrentInput(null)
                   setCurrentResult(null)
                   setErrorMessage('')
