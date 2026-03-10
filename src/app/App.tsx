@@ -68,6 +68,7 @@ function App() {
   const [historyTab, setHistoryTab] = useState<HistoryTab>('single')
   const [errorMessage, setErrorMessage] = useState('')
   const [horseErrorMessage, setHorseErrorMessage] = useState('')
+  const [confirmingClearHistory, setConfirmingClearHistory] = useState(false)
   const sessionTotals = aggregateSessionTotals(sessionRaces)
   const finishPositionOptions = getFinishPositionOptions(Number.parseInt(form.horseCount, 10))
   const selectedHistoryRecord =
@@ -94,6 +95,12 @@ function App() {
   useEffect(() => {
     saveHorseNames(horseNames)
   }, [horseNames])
+
+  useEffect(() => {
+    if (historyRecords.length === 0 && confirmingClearHistory) {
+      setConfirmingClearHistory(false)
+    }
+  }, [confirmingClearHistory, historyRecords.length])
 
   useEffect(() => {
     if (horseNames.length === 0) {
@@ -247,6 +254,7 @@ function App() {
   const handleClearHistory = () => {
     setHistoryRecords([])
     setSelectedHistoryRecordId(null)
+    setConfirmingClearHistory(false)
   }
 
   const handleSelectHistoryRecord = (record: HistoryRecord) => {
@@ -640,15 +648,42 @@ function App() {
             <h2>Historial reciente</h2>
           </div>
 
-          <div className="form-actions">
-            <button
-              type="button"
-              className="button button--ghost"
-              onClick={handleClearHistory}
-              disabled={historyRecords.length === 0}
-            >
-              Borrar historial
-            </button>
+          <div className="history-clear">
+            {confirmingClearHistory ? (
+              <>
+                <p className="history-clear__warning">
+                  Esto borrara todo el historial guardado en este navegador.
+                </p>
+                <div className="form-actions">
+                  <button
+                    type="button"
+                    className="button button--danger"
+                    onClick={handleClearHistory}
+                    disabled={historyRecords.length === 0}
+                  >
+                    Confirmar borrado
+                  </button>
+                  <button
+                    type="button"
+                    className="button button--ghost"
+                    onClick={() => setConfirmingClearHistory(false)}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="button button--ghost"
+                  onClick={() => setConfirmingClearHistory(true)}
+                  disabled={historyRecords.length === 0}
+                >
+                  Borrar historial
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="history-tabs" role="tablist" aria-label="Historial">

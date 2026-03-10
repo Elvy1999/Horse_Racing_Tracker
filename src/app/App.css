@@ -242,6 +242,12 @@
   color: #a51f1f;
 }
 
+.button--danger {
+  background: linear-gradient(135deg, #9e1111, #db2f2f);
+  color: #fff8ef;
+  box-shadow: 0 14px 30px rgba(158, 17, 17, 0.24);
+}
+
 .text-button {
   padding: 0;
   border: none;
@@ -393,6 +399,19 @@
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 16px;
+}
+
+.history-clear {
+  display: grid;
+  gap: 10px;
+}
+
+.history-clear__warning {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(158, 17, 17, 0.08);
+  color: #8f1818;
 }
 
 .history-tabs__button {
