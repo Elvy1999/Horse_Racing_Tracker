@@ -76,16 +76,21 @@ Each qualifying position payout is distributed as follows:
 
 ```text
 src/
-  App.tsx                Main application flow and UI
-  App.css                Component-level styling
-  index.css              Global styling
-  lib/
-    calculator.ts        Purse tables, payout rules, and session aggregation
-    calculator.test.ts   Automated tests for calculator behavior
+  app/
+    App.tsx              Main application flow and UI
+    App.css              Component-level styling
+  assets/
+    HorseLogo.jpeg       Header branding image
+  features/
+    calculator/
+      calculator.ts      Purse tables, payout rules, and session aggregation
+      calculator.test.ts Automated tests for calculator behavior
+      types.ts           Shared TypeScript types for the calculator domain
+  shared/
     format.ts            Currency and label formatting helpers
     storage.ts           localStorage persistence helpers
-    types.ts             Shared TypeScript types
-HorseLogo.jpeg           Header branding image
+  index.css              Global styling
+  main.tsx               React entry point
 ```
 
 ## Local Development

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import './App.css'
-import horseLogo from '../HorseLogo.jpeg'
+import horseLogo from '../assets/HorseLogo.jpeg'
 import {
   AGE_GROUP_OPTIONS,
   CATEGORY_OPTIONS,
@@ -11,9 +11,14 @@ import {
   formatCategoryLabel,
   formatPositionPercent,
   getFinishPositionOptions,
-} from './lib/calculator'
-import { formatCurrency, formatDateTime, formatHorseCountLabel, formatPositionLabel } from './lib/format'
-import { loadHistoryRecords, saveHistoryRecords } from './lib/storage'
+} from '../features/calculator/calculator'
+import {
+  formatCurrency,
+  formatDateTime,
+  formatHorseCountLabel,
+  formatPositionLabel,
+} from '../shared/format'
+import { loadHistoryRecords, saveHistoryRecords } from '../shared/storage'
 import type {
   AgeGroup,
   CalculationInput,
@@ -22,7 +27,7 @@ import type {
   HistoryRecord,
   SessionRecord,
   SessionRace,
-} from './lib/types'
+} from '../features/calculator/types'
 
 type FormState = {
   horseName: string

@@ -1,4 +1,4 @@
-import type { HistoryRecord } from './types'
+import type { HistoryRecord } from '../features/calculator/types'
 
 const HISTORY_KEY = 'decoo-reclamo-history'
 
