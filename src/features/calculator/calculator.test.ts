@@ -67,11 +67,11 @@ describe('race calculations', () => {
     ).toEqual({
       basePurse: 125247,
       positionPercent: 0.2083,
-      positionPayout: 26088.95,
-      trainerAmount: 3913.34,
-      groomAmount: 2608.9,
-      jockeyAmount: 2608.9,
-      profitAmount: 16957.82,
+      positionPayout: 26089,
+      trainerAmount: 3913,
+      groomAmount: 2609,
+      jockeyAmount: 2609,
+      profitAmount: 16958,
     })
   })
 
@@ -87,11 +87,11 @@ describe('race calculations', () => {
     ).toEqual({
       basePurse: 157058,
       positionPercent: 0.111,
-      positionPayout: 17433.44,
-      trainerAmount: 2615.02,
-      groomAmount: 1743.34,
-      jockeyAmount: 1743.34,
-      profitAmount: 11331.74,
+      positionPayout: 17433,
+      trainerAmount: 2615,
+      groomAmount: 1743,
+      jockeyAmount: 1743,
+      profitAmount: 11332,
     })
   })
 
@@ -178,11 +178,11 @@ describe('session totals', () => {
 
     expect(aggregateSessionTotals(races)).toEqual({
       raceCount: 2,
-      totalPositionPayout: 59817.88,
-      totalTrainerAmount: 8972.68,
-      totalGroomAmount: 5981.79,
-      totalJockeyAmount: 5981.79,
-      totalProfitAmount: 38881.62,
+      totalPositionPayout: 59818,
+      totalTrainerAmount: 8973,
+      totalGroomAmount: 5982,
+      totalJockeyAmount: 5982,
+      totalProfitAmount: 38881,
     })
   })
 

@@ -66,7 +66,7 @@ The calculator supports the following categories:
 
 - Races with fewer than `3` horses are not allowed
 - Finish positions outside the payout table return a payout of `0`
-- All displayed money values are rounded to two decimal places
+- All displayed money values are rounded to whole numbers
 
 ### Payout Split
 

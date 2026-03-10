@@ -84,7 +84,7 @@ export function formatCategoryLabel(category: Category): string {
 }
 
 function roundCurrency(value: number): number {
-  return Math.round(value * 100) / 100
+  return Math.round(value)
 }
 
 export function getBasePurse(input: Pick<CalculationInput, 'ageGroup' | 'category' | 'customPurse'>): number {
@@ -120,7 +120,7 @@ export function calculateRacePayout(input: CalculationInput): CalculationResult 
   const trainerAmount = roundCurrency(positionPayout * 0.15)
   const groomAmount = roundCurrency(positionPayout * 0.1)
   const jockeyAmount = roundCurrency(positionPayout * 0.1)
-  const profitAmount = roundCurrency(positionPayout * 0.65)
+  const profitAmount = positionPayout - trainerAmount - groomAmount - jockeyAmount
 
   return {
     basePurse,
