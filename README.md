@@ -1,104 +1,115 @@
-# DECOO Reclamo Payment Calculator
+# DECOO Tabla De Pago
 
-A mobile-first web application for calculating horse race claim payouts for `DECOO Stable`.
+This is a web app I made for `DECOO Stable` to calculate how race money gets divided up.
 
-This project is built with React, TypeScript, and Vite. It allows users to calculate race payouts, view the breakdown for each party involved, group multiple races into a running session total, and review saved calculations from browser history.
+The idea is simple:
 
-## Overview
+- pick the horse
+- choose the horse age
+- choose the category
+- choose how many horses were in the race
+- choose the finishing position
+- see how much goes to the trainer, groom, jockey, and profit
 
-The application is designed to support a specific horse racing payment workflow based on fixed purse tables and distribution percentages. Users can enter a horse name, select the age group and category, provide the number of horses in the race and the finishing position, and instantly see:
+The app also lets you save horses, add multiple races into one session, and keep a local history in the browser.
 
-- Base purse amount
-- Position-based payout
-- Trainer payment
-- Groom payment
-- Jockey payment
-- Profit / take-home amount
+## What the app does
 
-The app also supports multi-race accumulation so a user can build a session and see total distributions across several races.
+This project is for calculating `reclamo` race payments using the payout rules we defined for the app.
 
-To simplify repeat use, horse names can now be saved locally and reused from a selector in future calculations.
+It can:
 
-## Key Features
+- calculate one race at a time
+- show the payment breakdown
+- save horse names in the browser
+- let you pick saved horses from a dropdown
+- add several races into one accumulated session
+- save race history and saved sessions
+- show details when you click a history item
 
-- Mobile-first responsive interface
-- Spanish-first user interface with DECOO branding
-- Fixed purse tables for:
-  - `3 years or less`
-  - `4 years or more`
-- Position payout rules for:
-  - `3 horses`
-  - `4 horses`
-  - `5 or more horses`
-- Automatic distribution of race winnings to:
-  - `Trainer`
-  - `Groom`
-  - `Jockey`
-  - `Profit`
-- Saved horse list stored in browser local storage
-- Horse selector that uses only saved names for new calculations
-- Session accumulator for multiple races
-- Local history for:
-  - Individual race calculations
-  - Saved sessions
-- Expandable history records that show the payment breakdown for each saved race
+## Main rules in the app
 
-## Business Rules Implemented
+### Horse age groups
+
+- `3 anos o menos`
+- `4 anos o mas`
 
 ### Categories
-
-The calculator supports the following categories:
 
 - `100`
 - `200`
 - `300`
 - `400`
 - `500`
-- `600`
-- `Clasico` with a custom purse amount entered by the user
+- `No Reclamable`
+- `Clasico`
 
-### Age Groups
+For `Clasico`, the user types the purse amount manually.
 
-- `3 years or less`
-- `4 years or more`
+### Number of horses
 
-### Race Entry Rules
+The app only allows:
 
-- Races with fewer than `3` horses are not allowed
-- Finish positions outside the payout table return a payout of `0`
-- All displayed money values are rounded to whole numbers
+- `3`
+- `4`
+- `5 o mas`
 
-### Payout Split
+### Finishing position
 
-Each qualifying position payout is distributed as follows:
+The position options change depending on how many horses are in the race:
 
-- Trainer: `15%`
-- Groom: `10%`
-- Jockey: `10%`
-- Profit: `65%`
+- `3 horses` -> positions `1` to `3`
+- `4 horses` -> positions `1` to `4`
+- `5 or more horses` -> positions `1` to `5`
 
-## Project Structure
+If a position does not pay, the result is `0`.
+
+### Payment split
+
+Once the race payout is calculated, the money is split like this:
+
+- `Entrenador` -> `15%`
+- `Groom` -> `10%`
+- `Jockey` -> `10%`
+- `Ganancia` -> `65%`
+
+All money is rounded to whole numbers.
+
+## Saved data
+
+Right now this app does not use a database.
+
+Everything is saved in browser `localStorage`, including:
+
+- saved horse names
+- individual race history
+- saved accumulated sessions
+
+That means the data stays on the same browser/device unless browser storage is cleared.
+
+## Project structure
 
 ```text
 src/
   app/
-    App.tsx              Main application flow and UI
-    App.css              Component-level styling
+    App.tsx
+    App.css
   assets/
-    HorseLogo.jpeg       Header branding image
+    HorseLogo.jpeg
   features/
     calculator/
-      calculator.ts      Purse tables, payout rules, and session aggregation
-      calculator.test.ts Automated tests for calculator behavior
-      types.ts           Shared TypeScript types for the calculator domain
+      calculator.ts
+      calculator.test.ts
+      types.ts
   shared/
-    format.ts            Currency and label formatting helpers
-    storage.ts           localStorage persistence helpers
-  index.css              Global styling
-  main.tsx               React entry point
+    format.ts
+    storage.ts
+    storage.test.ts
+  index.css
+  main.tsx
 ```
 
-## Local Development
+## Running it locally
 
 Install dependencies:
 
@@ -106,19 +117,19 @@ Install dependencies:
 npm install
 ```
 
-Start the local development server:
+Start the app:
 
 ```bash
 npm run dev
 ```
 
-Build for production:
+Build it:
 
 ```bash
 npm run build
 ```
 
-Run linting:
+Run lint:
 
 ```bash
 npm run lint
@@ -132,39 +143,30 @@ npm run test
 
 ## Deployment
 
-The repository includes a GitHub Pages deployment workflow. The Vite base path is configured for the repository site:
+The repo is set up for GitHub Pages.
 
-- Production URL: [https://elvy1999.github.io/Horse_Racing_Tracker/](https://elvy1999.github.io/Horse_Racing_Tracker/)
+Live URL:
 
-If GitHub Pages has not refreshed yet, allow a short delay after pushing changes and then reload the site.
+[https://elvy1999.github.io/Horse_Racing_Tracker/](https://elvy1999.github.io/Horse_Racing_Tracker/)
 
-## Data Storage
+If GitHub Pages does not update right away after a push, wait a little and refresh again.
 
-This project does not use a backend database in its current version.
+## Current scope
 
-- Calculation history is stored in `localStorage`
-- Saved horse names are stored in `localStorage`
-- Saved data remains in the current browser only
-- Clearing browser storage will remove the saved history and saved horse names
+This version is focused on keeping things simple.
 
-## Current Scope
+It does not have:
 
-This version is intentionally focused on a single payment ruleset and a streamlined workflow. It does not currently include:
-
-- User accounts
-- Cloud sync
-- Editable admin payout tables
-- Multiple race rule systems
-- Server-side storage
+- user accounts
+- cloud sync
+- a backend database
+- editable payout rules from the UI
+- multiple rule systems
 
 ## Verification
 
-The project is currently verified with:
+The project is checked with:
 
-- `npm run test`
 - `npm run lint`
+- `npm run test`
 - `npm run build`
-
-## License / Usage
-
-This repository is currently intended for DECOO Stable project use and internal iteration unless you decide to publish it under a separate license later.
