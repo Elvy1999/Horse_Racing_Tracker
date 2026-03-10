@@ -61,6 +61,11 @@ export const HORSE_COUNT_OPTIONS = [
   { value: 5, label: '5 o mas' },
 ] as const
 
+export function getFinishPositionOptions(horseCount: number): number[] {
+  const normalizedHorseCount = horseCount >= 5 ? 5 : Math.max(3, horseCount)
+  return Array.from({ length: normalizedHorseCount }, (_, index) => index + 1)
+}
+
 export function formatCategoryLabel(category: Category): string {
   return category === 600 ? 'No Reclamable' : String(category)
 }

@@ -10,6 +10,7 @@ import {
   calculateRacePayout,
   formatCategoryLabel,
   formatPositionPercent,
+  getFinishPositionOptions,
 } from './lib/calculator'
 import { formatCurrency, formatDateTime, formatHorseCountLabel, formatPositionLabel } from './lib/format'
 import { loadHistoryRecords, saveHistoryRecords } from './lib/storage'
@@ -48,6 +49,7 @@ function App() {
   const [selectedHistoryRecordId, setSelectedHistoryRecordId] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
   const sessionTotals = aggregateSessionTotals(sessionRaces)
+  const finishPositionOptions = getFinishPositionOptions(Number.parseInt(form.horseCount, 10))
   const selectedHistoryRecord =
     historyRecords.find(
       (record): record is CalculationRecord =>
@@ -249,9 +251,18 @@ function App() {
                 Cantidad de caballos
                 <select
                   value={form.horseCount}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, horseCount: event.target.value }))
-                  }
+                  onChange={(event) => {
+                    const nextHorseCount = event.target.value
+                    const nextPositionOptions = getFinishPositionOptions(Number.parseInt(nextHorseCount, 10))
+
+                    setForm((current) => ({
+                      ...current,
+                      horseCount: nextHorseCount,
+                      finishPosition: nextPositionOptions.includes(Number.parseInt(current.finishPosition, 10))
+                        ? current.finishPosition
+                        : String(nextPositionOptions[0]),
+                    }))
+                  }}
                 >
                   {HORSE_COUNT_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -263,15 +274,18 @@ function App() {
 
               <label>
                 Posicion final
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
+                <select
                   value={form.finishPosition}
                   onChange={(event) =>
                     setForm((current) => ({ ...current, finishPosition: event.target.value }))
                   }
-                />
+                >
+                  {finishPositionOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
               </label>
             </div>
 
