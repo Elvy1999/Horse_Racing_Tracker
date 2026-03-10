@@ -58,6 +58,11 @@ function App() {
       (record): record is CalculationRecord =>
         record.kind === 'single' && record.id === selectedHistoryRecordId,
     ) ?? null
+  const selectedSessionHistoryRecord =
+    historyRecords.find(
+      (record): record is SessionRecord =>
+        record.kind === 'session' && record.id === selectedHistoryRecordId,
+    ) ?? null
   const visibleHistoryRecords = historyRecords.filter((record) => record.kind === historyTab)
 
   useEffect(() => {
@@ -164,11 +169,7 @@ function App() {
   }
 
   const handleSelectHistoryRecord = (record: HistoryRecord) => {
-    if (record.kind !== 'single') {
-      return
-    }
-
-    setSelectedHistoryRecordId(record.id)
+    setSelectedHistoryRecordId((current) => (current === record.id ? null : record.id))
   }
 
   return (
@@ -542,6 +543,62 @@ function App() {
             </div>
           ) : null}
 
+          {historyTab === 'session' && selectedSessionHistoryRecord ? (
+            <div className="history-preview">
+              <div className="history-preview__header">
+                <div>
+                  <p className="history-list__type">Sesion seleccionada</p>
+                  <strong>{selectedSessionHistoryRecord.totals.raceCount} carreras guardadas</strong>
+                  <p className="history-list__meta">
+                    {formatDateTime(selectedSessionHistoryRecord.createdAt)}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="text-button"
+                  onClick={() => setSelectedHistoryRecordId(null)}
+                >
+                  Cerrar
+                </button>
+              </div>
+              <p className="history-list__details">
+                Total distribuido {formatCurrency(selectedSessionHistoryRecord.totals.totalPositionPayout)}
+              </p>
+              <dl className="history-list__distribution">
+                <div>
+                  <dt>Entrenador</dt>
+                  <dd>{formatCurrency(selectedSessionHistoryRecord.totals.totalTrainerAmount)}</dd>
+                </div>
+                <div>
+                  <dt>Groom</dt>
+                  <dd>{formatCurrency(selectedSessionHistoryRecord.totals.totalGroomAmount)}</dd>
+                </div>
+                <div>
+                  <dt>Jockey</dt>
+                  <dd>{formatCurrency(selectedSessionHistoryRecord.totals.totalJockeyAmount)}</dd>
+                </div>
+                <div>
+                  <dt>Ganancia</dt>
+                  <dd>{formatCurrency(selectedSessionHistoryRecord.totals.totalProfitAmount)}</dd>
+                </div>
+              </dl>
+              <ul className="history-preview__races">
+                {selectedSessionHistoryRecord.races.map((race) => (
+                  <li key={race.id}>
+                    <strong>{race.input.horseName}</strong>
+                    <span>
+                      {' '}
+                      | Categoria {formatCategoryLabel(race.input.category)} |{' '}
+                      {formatHorseCountLabel(race.input.horseCount)} |{' '}
+                      {formatPositionLabel(race.input.finishPosition)} |{' '}
+                      {formatCurrency(race.result.positionPayout)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
           {visibleHistoryRecords.length > 0 ? (
             <ul className="history-list">
               {visibleHistoryRecords.map((record) => (
@@ -549,9 +606,7 @@ function App() {
                   <div className="history-list__content">
                     <button
                       type="button"
-                      className={`history-list__summary${
-                        record.kind === 'single' ? ' history-list__summary--clickable' : ''
-                      }`}
+                      className="history-list__summary history-list__summary--clickable"
                       onClick={() => handleSelectHistoryRecord(record)}
                     >
                       <div>
@@ -576,11 +631,9 @@ function App() {
                           </p>
                         )}
                       </div>
-                      {record.kind === 'single' ? (
-                        <span className="history-list__toggle">
-                          {selectedHistoryRecordId === record.id ? 'Seleccionada' : 'Ver pagos'}
-                        </span>
-                      ) : null}
+                      <span className="history-list__toggle">
+                        {selectedHistoryRecordId === record.id ? 'Seleccionada' : 'Ver pagos'}
+                      </span>
                     </button>
                   </div>
                   <button
